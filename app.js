@@ -4,6 +4,27 @@
 (function () {
   const cfg = window.APP_CONFIG;
 
+  // ---------------- Ottimizzazione Mobile: solo segmenti se smartphone ----------------
+  if (window.innerWidth <= 768) {
+    const mapElement = document.getElementById('map');
+    if (mapElement) mapElement.style.display = 'none';
+
+    const searchContainer = document.querySelector('.search-container');
+    if (searchContainer) searchContainer.style.display = 'none';
+
+    const generateBtn = document.getElementById('generate-btn');
+    if (generateBtn) generateBtn.style.display = 'none';
+
+    const sidebarTabs = document.querySelector('.sidebar-tabs');
+    if (sidebarTabs) sidebarTabs.style.display = 'none';
+
+    const tabSegments = document.getElementById('tab-segments');
+    if (tabSegments) tabSegments.style.display = 'block';
+    
+    const tabAppunti = document.getElementById('tab-appunti');
+    if (tabAppunti) tabAppunti.style.display = 'none';
+  }
+
   // ---------------- map ----------------
   const map = L.map('map', { zoomControl: true }).setView([45.4384, 10.9916], 8); // Verona
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -96,7 +117,6 @@
       const a = pointMarkers.start.getLatLng(), b = pointMarkers.end.getLatLng();
       pointMarkers.start.setLatLng(b); pointMarkers.end.setLatLng(a);
     } else if (pointMarkers.start || pointMarkers.end) {
-      // solo uno dei due punti ha un pin: ricrea in base alle nuove coordinate
       if (s.dataset.coord) setPointMarker('start', JSON.parse(s.dataset.coord));
       if (e.dataset.coord) setPointMarker('end', JSON.parse(e.dataset.coord));
     }
@@ -135,7 +155,7 @@
   }
 
   function setPickMode(role) {
-    pickMode = pickMode === role ? null : role; // clic di nuovo sullo stesso pulsante annulla
+    pickMode = pickMode === role ? null : role;
     document.getElementById('pin-start').classList.toggle('is-active', pickMode === 'start');
     document.getElementById('pin-end').classList.toggle('is-active', pickMode === 'end');
     mapEl.classList.toggle('is-picking', !!pickMode);
@@ -170,7 +190,7 @@
     };
   }
 
-  // ---------------- pictogram (freccia curva, curvatura = severità) ----------------
+  // ---------------- pictogram ----------------
   function cornerIconSvg(note) {
     const size = 40;
     const c = size / 2;
@@ -182,7 +202,6 @@
       </svg>`;
     }
     const isRight = note.angle > 0;
-    // severità 1 (stretta) -> raggio piccolo; severità 6 (larga) -> quasi dritto
     const bendMap = { 1: 30, 2: 24, 3: 18, 4: 13, 5: 8, 6: 4 };
     const bend = bendMap[note.severity] || 10;
     const sx = 6, sy = 34, ex = 34, ey = 6;
@@ -202,7 +221,7 @@
   // ---------------- rendering ----------------
   function clearMapLayers() {
     if (routeLayer) map.removeLayer(routeLayer);
-    if (segmentPreviewLayer) { map.removeLayer(segmentPreviewLayer); segmentPreviewLayer = null; } // <-- Riga aggiunta
+    if (segmentPreviewLayer) { map.removeLayer(segmentPreviewLayer); segmentPreviewLayer = null; }
     cornerMarkersLayer.clearLayers();
   }
 
@@ -304,7 +323,7 @@
     });
   });
 
-  // ================= SEGMENTS (Strava-style challenges) =================
+  // ================= SEGMENTS =================
   const hintEl = document.getElementById('segment-hint');
   const segmentsListEl = document.getElementById('segments-list');
   let segmentPickMode = false;
@@ -326,7 +345,7 @@
       input.value = '…';
       input.dataset.coord = JSON.stringify(coord);
       setPointMarker(role, coord);
-      setPickMode(role); // richiude la modalità di scelta
+      setPickMode(role);
       input.value = await reverseGeocode(coord);
       return;
     }
@@ -387,8 +406,6 @@
     }
   }
 
-  // Verifica subito, al caricamento della pagina, quale backend risponde:
-  // così l'avviso è visibile anche prima di aprire la scheda "Segmenti".
   window.RallySegments.checkBackend().then(updateBackendBadge);
 
   // ---------------- leaderboard modal ----------------
@@ -408,7 +425,6 @@
     document.getElementById('leaderboard-meta').textContent = `${(segment.distance_m / 1000).toFixed(2)} km`;
     document.getElementById('sync-note').textContent = window.RallySegments.getBackendLabel();
 
-    // mostra il segmento sulla mappa e genera al volo i suoi appunti di rally
     if (segmentPreviewLayer) map.removeLayer(segmentPreviewLayer);
     segmentPreviewLayer = L.polyline(segment.coords.map(([lon, lat]) => [lat, lon]), { color: '#17332b', weight: 7, opacity: 0.85 }).addTo(map);
     map.fitBounds(segmentPreviewLayer.getBounds(), { padding: [60, 60] });
@@ -450,7 +466,6 @@
     modal.hidden = true;
     if (segmentPreviewLayer) { map.removeLayer(segmentPreviewLayer); segmentPreviewLayer = null; }
     
-    // Se c'è un percorso principale, ripristina quello. Altrimenti, pulisci tutto.
     if (currentRoute) { 
       renderCornerPins(currentNotes); 
       map.fitBounds(routeLayer.getBounds(), { padding: [40, 40] }); 
@@ -466,7 +481,6 @@
     modal.hidden = true;
     refreshSegmentsList();
     
-    // Pulizia della mappa anche dopo l'eliminazione
     if (segmentPreviewLayer) { map.removeLayer(segmentPreviewLayer); segmentPreviewLayer = null; }
     if (currentRoute) { 
       renderCornerPins(currentNotes); 
