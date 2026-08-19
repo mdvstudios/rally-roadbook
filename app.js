@@ -29,7 +29,7 @@
       sidebar.style.left = '0';
     }
 
-    // Assicura che la tab dei segmenti sia attiva e visibile
+    // Mostra la tab dei segmenti e FORZA il caricamento dei dati
     const tabSegments = document.getElementById('tab-segments');
     if (tabSegments) {
       tabSegments.hidden = false;
@@ -38,31 +38,11 @@
     
     const tabAppunti = document.getElementById('tab-appunti');
     if (tabAppunti) tabAppunti.style.display = 'none';
-  }
 
-  // ---------------- map ----------------
-  const map = L.map('map', { zoomControl: true }).setView([45.4384, 10.9916], 8); // Verona
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-  }).addTo(map);
-
-  let routeLayer = null;
-  let cornerMarkersLayer = L.layerGroup().addTo(map);
-  let segmentPreviewLayer = null;
-  let currentRoute = null; // { coords: [[lon,lat],...], distanceKm, durationMin }
-  let currentNotes = [];
-
-  // pin di partenza/arrivo trascinabili, stile Google Maps
-  let pointMarkers = { start: null, end: null };
-  let pickMode = null; // null | 'start' | 'end'
-  const mapEl = document.getElementById('map');
-  const mapHint = document.getElementById('map-hint');
-
-  // ---------------- geocoding (Nominatim) ---------------
-  function debounce(fn, ms) {
-    let t;
-    return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+    // Chiama la funzione per scaricare e mostrare i segmenti dal cloud
+    if (typeof refreshSegmentsList === 'function') {
+      refreshSegmentsList();
+    }
   }
 
   async function geocode(query) {
