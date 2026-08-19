@@ -5,7 +5,7 @@
   const cfg = window.APP_CONFIG;
 
   // ---------------- Ottimizzazione Mobile: Solo Segmenti a tutto schermo ----------------
-  // Ottimizzazione mobile: se lo schermo è <= 768px, mostra solo i segmenti
+  // Ottimizzazione mobile: se lo schermo è <= 768px
   if (window.innerWidth <= 768) {
     const mapElement = document.getElementById('map');
     if (mapElement) mapElement.style.display = 'none';
@@ -16,10 +16,7 @@
     const generateBtn = document.getElementById('generate-btn');
     if (generateBtn) generateBtn.style.display = 'none';
 
-    const sidebarTabs = document.querySelector('.sidebar-tabs');
-    if (sidebarTabs) sidebarTabs.style.display = 'none';
-
-    // Mostra la sidebar a tutto schermo
+    // Espande la sidebar a tutto schermo
     const sidebar = document.querySelector('.sidebar');
     if (sidebar) {
       sidebar.style.width = '100%';
@@ -29,22 +26,16 @@
       sidebar.style.left = '0';
     }
 
-    // Mostra la tab dei segmenti
-    const tabSegments = document.getElementById('tab-segments');
-    if (tabSegments) {
-      tabSegments.hidden = false;
-      tabSegments.style.display = 'block';
-    }
-    
-    const tabAppunti = document.getElementById('tab-appunti');
-    if (tabAppunti) tabAppunti.style.display = 'none';
-
-    // Ritardo di sicurezza per assicurarsi che l'HTML sia pronto prima di scaricare i segmenti
+    // Simula un clic automatico sul tab "Segmenti" originale dell'app
+    // (Cerca il bottone o il tab dei segmenti e lo attiva in modo nativo)
     setTimeout(() => {
-      if (typeof refreshSegmentsList === 'function') {
+      const segmentsTabBtn = document.querySelector('[data-tab="segments"]') || document.getElementById('btn-tab-segments') || document.querySelectorAll('.sidebar-tabs button')[1];
+      if (segmentsTabBtn) {
+        segmentsTabBtn.click();
+      } else if (typeof refreshSegmentsList === 'function') {
         refreshSegmentsList();
       }
-    }, 500);
+    }, 300);
   }
 
   async function geocode(query) {
