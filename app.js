@@ -23,7 +23,7 @@
   const mapEl = document.getElementById('map');
   const mapHint = document.getElementById('map-hint');
 
-  // ---------------- geocoding (Nominatim) ----------------
+  // ---------------- geocoding (Nominatim) ---------------
   function debounce(fn, ms) {
     let t;
     return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
