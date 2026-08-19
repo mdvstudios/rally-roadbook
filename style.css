@@ -447,3 +447,22 @@ a{ color: inherit; }
     display: block !important;
   }
 }
+
+@media (max-width: 768px) {
+  body, html {
+    height: 100vh;
+    margin: 0;
+    background-color: #121212;
+    overflow: hidden;
+  }
+  .sidebar {
+    width: 100% !important;
+    height: 100vh !important;
+    display: flex;
+    flex-direction: column;
+  }
+  #tab-segments {
+    flex: 1;
+    overflow-y: auto;
+  }
+}

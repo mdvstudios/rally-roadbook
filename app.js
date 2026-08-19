@@ -4,25 +4,24 @@
 (function () {
   const cfg = window.APP_CONFIG;
 
-  // ---------------- Ottimizzazione Mobile: solo segmenti se smartphone ----------------
+  // ---------------- Ottimizzazione Mobile: Solo Segmenti a tutto schermo ----------------
   if (window.innerWidth <= 768) {
+    // Nasconde completamente la mappa, l'header di ricerca e il selettore delle tab
     const mapElement = document.getElementById('map');
     if (mapElement) mapElement.style.display = 'none';
 
     const searchContainer = document.querySelector('.search-container');
     if (searchContainer) searchContainer.style.display = 'none';
 
-    const generateBtn = document.getElementById('generate-btn');
-    if (generateBtn) generateBtn.style.display = 'none';
-
     const sidebarTabs = document.querySelector('.sidebar-tabs');
     if (sidebarTabs) sidebarTabs.style.display = 'none';
 
+    // Seleziona e mostra direttamente e a tutto schermo il pannello dei segmenti
     const tabSegments = document.getElementById('tab-segments');
-    if (tabSegments) tabSegments.style.display = 'block';
+    if (tabSegments) tabSegments.classList.add('is-active');
     
     const tabAppunti = document.getElementById('tab-appunti');
-    if (tabAppunti) tabAppunti.style.display = 'none';
+    if (tabAppunti) tabAppunti.classList.remove('is-active');
   }
 
   // ---------------- map ----------------
