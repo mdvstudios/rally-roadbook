@@ -5,23 +5,39 @@
   const cfg = window.APP_CONFIG;
 
   // ---------------- Ottimizzazione Mobile: Solo Segmenti a tutto schermo ----------------
+  // Ottimizzazione mobile: se lo schermo è <= 768px, mostra solo i segmenti
   if (window.innerWidth <= 768) {
-    // Nasconde completamente la mappa, l'header di ricerca e il selettore delle tab
     const mapElement = document.getElementById('map');
     if (mapElement) mapElement.style.display = 'none';
 
     const searchContainer = document.querySelector('.search-container');
     if (searchContainer) searchContainer.style.display = 'none';
 
+    const generateBtn = document.getElementById('generate-btn');
+    if (generateBtn) generateBtn.style.display = 'none';
+
     const sidebarTabs = document.querySelector('.sidebar-tabs');
     if (sidebarTabs) sidebarTabs.style.display = 'none';
 
-    // Seleziona e mostra direttamente e a tutto schermo il pannello dei segmenti
+    // Mostra la sidebar a tutto schermo
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar) {
+      sidebar.style.width = '100%';
+      sidebar.style.height = '100vh';
+      sidebar.style.position = 'absolute';
+      sidebar.style.top = '0';
+      sidebar.style.left = '0';
+    }
+
+    // Assicura che la tab dei segmenti sia attiva e visibile
     const tabSegments = document.getElementById('tab-segments');
-    if (tabSegments) tabSegments.classList.add('is-active');
+    if (tabSegments) {
+      tabSegments.hidden = false;
+      tabSegments.style.display = 'block';
+    }
     
     const tabAppunti = document.getElementById('tab-appunti');
-    if (tabAppunti) tabAppunti.classList.remove('is-active');
+    if (tabAppunti) tabAppunti.style.display = 'none';
   }
 
   // ---------------- map ----------------
