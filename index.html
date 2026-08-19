@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Road Book — Appunti di rally generati automaticamente</title>
+<meta name="description" content="Genera automaticamente gli appunti di rally (chicane, tornanti, curve numerate) da un percorso OpenStreetMap e sfida altri piloti sui segmenti.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <header class="topbar">
+    <div class="topbar__brand">
+      <span class="topbar__flag" aria-hidden="true"></span>
+      <div>
+        <h1 class="topbar__title">ROAD BOOK</h1>
+        <p class="topbar__subtitle">appunti di percorrenza generati automaticamente</p>
+      </div>
+    </div>
+
+    <form class="topbar__form" id="route-form">
+      <div class="field">
+        <label for="start">Partenza</label>
+        <div class="field__row">
+          <input type="text" id="start" placeholder="es. Verona, Piazza Bra" autocomplete="off" required>
+          <button type="button" class="pin-btn" id="pin-start" title="Scegli sulla mappa" aria-label="Scegli la partenza sulla mappa">📍</button>
+        </div>
+        <ul class="suggest" id="start-suggest" hidden></ul>
+      </div>
+      <button type="button" class="swap-btn" id="swap-btn" title="Inverti partenza/arrivo" aria-label="Inverti partenza e arrivo">⇅</button>
+      <div class="field">
+        <label for="end">Arrivo</label>
+        <div class="field__row">
+          <input type="text" id="end" placeholder="es. Passo Fedaia" autocomplete="off" required>
+          <button type="button" class="pin-btn" id="pin-end" title="Scegli sulla mappa" aria-label="Scegli l'arrivo sulla mappa">📍</button>
+        </div>
+        <ul class="suggest" id="end-suggest" hidden></ul>
+      </div>
+      <button type="submit" class="btn btn--primary" id="generate-btn">Genera road book</button>
+    </form>
+  </header>
+
+  <main class="layout">
+
+    <aside class="roadbook" id="roadbook" aria-label="Appunti di percorrenza">
+      <div class="roadbook__tabs" role="tablist">
+        <button class="tab is-active" data-tab="notes" role="tab" aria-selected="true">Appunti</button>
+        <button class="tab" data-tab="segments" role="tab" aria-selected="false">Segmenti</button>
+      </div>
+
+      <section class="tab-panel is-active" data-panel="notes" id="panel-notes">
+        <div class="roadbook__meta" id="route-meta" hidden>
+          <div><span id="meta-distance">–</span><small>km</small></div>
+          <div><span id="meta-duration">–</span><small>min</small></div>
+          <div><span id="meta-corners">–</span><small>curve</small></div>
+        </div>
+
+        <div class="scale-legend" id="scale-legend" hidden>
+          <strong>Scala severità:</strong> 1 = tornante stretto · 6 = curva veloce
+        </div>
+
+        <ol class="notes-strip" id="notes-strip">
+          <li class="notes-empty" id="notes-empty">
+            Inserisci partenza e arrivo per generare automaticamente gli appunti: ogni curva viene classificata come su un vero road book di gara (destra/sinistra 1‑6, tornante, chicane).
+          </li>
+        </ol>
+      </section>
+
+      <section class="tab-panel" data-panel="segments" id="panel-segments">
+        <div class="segments-intro">
+          <p>Ritaglia un tratto del percorso come <strong>segmento cronometrato</strong> e sfida altri piloti, in stile Strava. Il tempo si registra con il GPS del dispositivo.</p>
+          <p class="backend-status" id="backend-status">Verifica sincronizzazione…</p>
+          <button class="btn btn--ghost" id="create-segment-btn" disabled>✂️ Ritaglia segmento dal percorso</button>
+          <p class="segments-hint" id="segment-hint" hidden>Tocca sulla mappa il punto di <b>inizio</b> del segmento, poi il punto di <b>fine</b>.</p>
+        </div>
+        <ul class="segments-list" id="segments-list"></ul>
+      </section>
+    </aside>
+
+    <div id="map" class="map"></div>
+
+    <div class="map-hint" id="map-hint" hidden></div>
+
+    <div class="timer-hud" id="timer-hud" hidden>
+      <div class="timer-hud__label" id="timer-segment-name">Segmento</div>
+      <div class="timer-hud__time" id="timer-clock">00:00.0</div>
+      <div class="timer-hud__status" id="timer-status">In attesa del punto di partenza…</div>
+      <button class="btn btn--ghost btn--small" id="timer-stop-btn">Annulla</button>
+    </div>
+
+  </main>
+</div>
+
+<div class="modal" id="leaderboard-modal" hidden>
+  <div class="modal__card">
+    <button class="modal__close" id="leaderboard-close" aria-label="Chiudi">✕</button>
+    <h2 id="leaderboard-title">Classifica segmento</h2>
+    <p class="modal__meta" id="leaderboard-meta"></p>
+
+    <div class="segment-notes" id="segment-notes"></div>
+
+    <ol class="leaderboard" id="leaderboard-list"></ol>
+    <div class="leaderboard__actions">
+      <button class="btn btn--primary" id="start-timer-btn">🏁 Registra un tempo</button>
+      <button class="btn btn--ghost" id="delete-segment-btn">Elimina segmento</button>
+    </div>
+    <p class="modal__note" id="sync-note"></p>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@turf/turf@6.5.0/turf.min.js"></script>
+<script src="config.js"></script>
+<script src="pacenotes.js"></script>
+<script src="segments.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "name": "rally-road-book",
+  "private": true,
+  "description": "Road book rally con generazione automatica appunti e segmenti condivisi",
+  "dependencies": {
+    "@netlify/blobs": "^7.4.0"
+  }
+}
