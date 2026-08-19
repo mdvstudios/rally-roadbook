@@ -1,7 +1,6 @@
 // ============================================================
 // Funzione serverless: classifica condivisa (tempi) per segmento.
 // ============================================================
-// Aggiungi connectLambda qui nell'import
 const { getStore, connectLambda } = require('@netlify/blobs');
 
 exports.handler = async (event) => {
@@ -11,7 +10,6 @@ exports.handler = async (event) => {
   const store = getStore('rb-results');
 
   try {
-    // ... [il resto del tuo codice qui sotto rimane assolutamente identico]
     if (event.httpMethod === 'GET') {
       const segmentId = event.queryStringParameters?.segmentId;
       if (!segmentId) return json(400, { error: 'missing segmentId' });
