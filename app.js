@@ -450,14 +450,15 @@
     modal.hidden = true;
     if (segmentPreviewLayer) { map.removeLayer(segmentPreviewLayer); segmentPreviewLayer = null; }
     
+    // Se c'è un percorso principale, ripristina quello. Altrimenti, pulisci tutto.
     if (currentRoute) { 
       renderCornerPins(currentNotes); 
       map.fitBounds(routeLayer.getBounds(), { padding: [40, 40] }); 
     } else {
-      // <-- Se non c'è un percorso base, svuota completamente i pin dalla mappa
       cornerMarkersLayer.clearLayers();
     }
   });
+
   document.getElementById('delete-segment-btn').addEventListener('click', async () => {
     if (!activeSegment) return;
     if (!confirm(`Eliminare il segmento "${activeSegment.name}" e tutti i suoi tempi?`)) return;
@@ -465,7 +466,7 @@
     modal.hidden = true;
     refreshSegmentsList();
     
-    // <-- Aggiunta la pulizia della mappa anche dopo l'eliminazione
+    // Pulizia della mappa anche dopo l'eliminazione
     if (segmentPreviewLayer) { map.removeLayer(segmentPreviewLayer); segmentPreviewLayer = null; }
     if (currentRoute) { 
       renderCornerPins(currentNotes); 
