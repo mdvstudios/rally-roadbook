@@ -439,7 +439,7 @@ a{ color: inherit; }
     width: 100vw !important;
     height: 100vh !important;
     z-index: 999999 !important;
-    background-color: #121212 !important; /* Mantiene il tema scuro */
+    background-color: #e4bfbf !important; /* Mantiene il tema scuro */
     padding: 20px !important;
     box-sizing: border-box !important;
     overflow-y: auto !important;
