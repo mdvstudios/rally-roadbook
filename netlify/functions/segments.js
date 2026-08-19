@@ -10,7 +10,6 @@ exports.handler = async (event) => {
       const { blobs } = await store.list();
       let segments = await Promise.all(blobs.map(b => store.get(b.key, { type: 'json' })));
       
-      // LA SOLUZIONE È QUI: Rimuove i "fantasmi" null PRIMA di ordinare
       segments = segments.filter(Boolean); 
       
       // Ordina dal più recente
