@@ -414,3 +414,34 @@ a{ color: inherit; }
 @media (prefers-reduced-motion: reduce){
   *{ scroll-behavior:auto !important; }
 }
+
+@media (max-width: 768px) {
+  /* Nasconde la mappa e i controlli da desktop */
+  #map, 
+  .search-container, 
+  #generate-btn,
+  .sidebar-tabs {
+    display: none !important;
+  }
+
+  /* Rende la sezione dei segmenti a tutto schermo */
+  body, html {
+    height: 100vh;
+    margin: 0;
+    overflow: auto;
+    background-color: #121212; /* Mantieni il colore scuro del tuo tema */
+  }
+
+  .sidebar {
+    width: 100% !important;
+    height: 100vh !important;
+    position: relative !important;
+    box-shadow: none !important;
+    padding: 15px;
+  }
+
+  /* Mostra direttamente la scheda dei segmenti */
+  #tab-segments {
+    display: block !important;
+  }
+}
