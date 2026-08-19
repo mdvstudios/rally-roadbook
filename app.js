@@ -29,7 +29,7 @@
       sidebar.style.left = '0';
     }
 
-    // Mostra la tab dei segmenti e FORZA il caricamento dei dati
+    // Mostra la tab dei segmenti
     const tabSegments = document.getElementById('tab-segments');
     if (tabSegments) {
       tabSegments.hidden = false;
@@ -39,10 +39,12 @@
     const tabAppunti = document.getElementById('tab-appunti');
     if (tabAppunti) tabAppunti.style.display = 'none';
 
-    // Chiama la funzione per scaricare e mostrare i segmenti dal cloud
-    if (typeof refreshSegmentsList === 'function') {
-      refreshSegmentsList();
-    }
+    // Ritardo di sicurezza per assicurarsi che l'HTML sia pronto prima di scaricare i segmenti
+    setTimeout(() => {
+      if (typeof refreshSegmentsList === 'function') {
+        refreshSegmentsList();
+      }
+    }, 500);
   }
 
   async function geocode(query) {
