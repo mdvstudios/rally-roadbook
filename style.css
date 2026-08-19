@@ -415,54 +415,41 @@ a{ color: inherit; }
   *{ scroll-behavior:auto !important; }
 }
 
+/* ========================================= */
+/* MODALITÀ MOBILE: SOLO SEGMENTI FULL SCREEN */
+/* ========================================= */
 @media (max-width: 768px) {
-  /* Nasconde completamente mappa, ricerca e bottoni roadbook su smartphone */
+  /* 1. Nascondiamo tutto ciò che non serve */
+  #route-form, 
   #map, 
-  .search-container, 
-  #generate-btn,
-  .sidebar-tabs {
+  .tab,
+  header,
+  #tab-appunti,
+  [data-panel="appunti"] {
     display: none !important;
   }
 
-  /* Espande la sidebar a tutto schermo */
-  body, html {
-    height: 100% !important;
-    background-color: #1a1a1a !important;
-    overflow: auto !important;
-  }
-
-  .sidebar {
-    width: 100% !important;
-    height: 100vh !important;
-    position: absolute !important;
+  /* 2. Sganciamo il pannello segmenti e lo mettiamo a tutto schermo */
+  #tab-segments,
+  [data-panel="segments"] {
+    display: block !important;
+    position: fixed !important;
     top: 0 !important;
     left: 0 !important;
-    z-index: 9999 !important;
-    padding: 10px !important;
-    background-color: #1a1a1a !important;
-  }
-
-  /* Forza la visualizzazione immediata della scheda segmenti */
-  #tab-segments {
-    display: block !important;
-  }
-}
-
-@media (max-width: 768px) {
-  body, html {
-    height: 100vh;
-    margin: 0;
-    background-color: #121212;
-    overflow: hidden;
-  }
-  .sidebar {
-    width: 100% !important;
+    width: 100vw !important;
     height: 100vh !important;
-    display: flex;
-    flex-direction: column;
+    z-index: 999999 !important;
+    background-color: #121212 !important; /* Mantiene il tema scuro */
+    padding: 20px !important;
+    box-sizing: border-box !important;
+    overflow-y: auto !important;
+    margin: 0 !important;
   }
-  #tab-segments {
-    flex: 1;
-    overflow-y: auto;
+  
+  /* 3. Pulizia della barra laterale */
+  .sidebar {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
   }
 }
