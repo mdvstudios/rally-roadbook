@@ -416,7 +416,7 @@ a{ color: inherit; }
 }
 
 @media (max-width: 768px) {
-  /* Nasconde la mappa e i controlli da desktop */
+  /* Nasconde completamente mappa, ricerca e bottoni roadbook su smartphone */
   #map, 
   .search-container, 
   #generate-btn,
@@ -424,23 +424,25 @@ a{ color: inherit; }
     display: none !important;
   }
 
-  /* Rende la sezione dei segmenti a tutto schermo */
+  /* Espande la sidebar a tutto schermo */
   body, html {
-    height: 100vh;
-    margin: 0;
-    overflow: auto;
-    background-color: #121212; /* Mantieni il colore scuro del tuo tema */
+    height: 100% !important;
+    background-color: #1a1a1a !important;
+    overflow: auto !important;
   }
 
   .sidebar {
     width: 100% !important;
     height: 100vh !important;
-    position: relative !important;
-    box-shadow: none !important;
-    padding: 15px;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    z-index: 9999 !important;
+    padding: 10px !important;
+    background-color: #1a1a1a !important;
   }
 
-  /* Mostra direttamente la scheda dei segmenti */
+  /* Forza la visualizzazione immediata della scheda segmenti */
   #tab-segments {
     display: block !important;
   }
